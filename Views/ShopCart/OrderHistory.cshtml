@@ -1,0 +1,213 @@
+﻿@using TheLight_JoneBookShop_WebMVC.helper
+@model IEnumerable<TheLight_JoneBookShop_WebMVC.DTO.OrderHistory>
+
+@{
+    ViewData["Title"] = "Lịch sử thanh toán | JoneBookShop";
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".btn-detail").click(function () {
+                var orderId = $(this).data("id");
+
+                $.ajax({
+                    url: "/ShopCart/GetOrderDetails",
+                    type: "GET",
+                    data: { orderId: orderId },
+                    success: function (data) {
+                        var tbody = $("#orderDetailBody");
+                        tbody.empty(); // Xóa dữ liệu cũ
+
+                        if (data.length > 0) {
+                            $.each(data, function (index, item) {
+                                var row = "<tr>" +
+                                    "<td>" + item.bookName + "</td>" +
+                                    "<td>" + item.quantity + "</td>" +
+                                    "<td>" + item.price.toLocaleString('vi-VN') + " VND</td>" +
+                                    "</tr>";
+                                tbody.append(row);
+                            });
+                        } else {
+                            tbody.append("<tr><td colspan='3' class='text-center'>Không có dữ liệu</td></tr>");
+                        }
+
+                        $("#orderDetailModal").modal("show");
+                    }
+                });
+            });
+        });
+        function Xuathoadon(orderId) {
+            $.ajax({
+                url: "/ShopCart/InHoaDon",
+                type: "GET",
+                data: { orderId: orderId },
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'JoneBookShop Thông Báo',
+                            text: 'Hoá đơn đã được gửi đến email của bạn. Vui lòng kiểm tra hòm thư (bao gồm cả mục thư rác) để xác nhận thông tin chi tiết. Nếu không nhận được, hãy thử gửi lại hoặc liên hệ bộ phận hỗ trợ.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'JoneBookShop Thông Báo',
+                            text: 'Xuất hoá đơn thất bại. Có thể đã xảy ra lỗi trong quá trình xử lý. Vui lòng thử lại sau hoặc liên hệ với bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+}
+@section Styles {
+    <style>
+        .main-content-wrapper .cart-table-area table thead tr th {
+            text-align: center;
+            border-top: none;
+            border-bottom: none;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 25%;
+            flex: 0 0 25%;
+            width: 11% !important;
+            font-size: 17px;
+            color: white;
+            text-transform: capitalize;
+            font-weight: 400;
+        }
+
+        .main-content-wrapper .cart-table-area table tbody tr td {
+            border: none;
+            -webkit-box-flex: 0;
+            -ms-flex: 0 0 25%;
+            flex: 0 0 25%;
+            width: 11% !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .main-content-wrapper .cart-table-area table thead tr {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: inline-block;
+            width: 100%;
+            height: auto;
+            background-color: firebrick !important;
+        }
+
+        .scrolltable{
+            max-height: 800px;
+            overflow-y: auto;
+        }
+    </style>
+}
+<div class="cart-table-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="cart-title mt-4 mb-4">
+                    <h1 class="text-center">Lịch Sử Giao Dịch</h1>
+                </div>
+
+                <!-- Sử dụng table-responsive để có thanh cuộn ngang nếu bảng quá rộng -->
+                <div class="table-responsive scrolltable">
+                    <!-- Các class của Bootstrap: table-bordered, table-hover, table-striped,... -->
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Tên Khách Hàng</th>
+                                <th>Ngày Đặt Hàng</th>
+                                <th>Ngày Giao Hàng</th>
+                                <th>Thuế</th>
+                                <th>Mã Giảm Giá</th>
+                                <th>Phương Thức Thanh Toán</th>
+                                <th>Địa Chỉ Giao Hàng</th>
+                                <th>Tổng Tiền</th>
+                                <th>Chi Tiết Đơn Hàng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.FullName</td>
+                                    <!-- Nếu muốn định dạng ngày/tháng, có thể làm như sau:
+                                    @item.OrderDate.ToString("dd/MM/yyyy HH:mm:ss") -->
+                                    <td>@item.OrderDate.ToShortDateString()</td>
+                                    @if (item.DeliveryDate != null)
+                                    {
+                                        <td>@item.DeliveryDate</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Đang Giao</td>
+                                    }
+                                    <td>@item.Tax</td>
+                                    @if (item.Voucher!.StartsWith("DEFAULT"))
+                                    {
+                                        <td>Không áp dụng</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.Voucher</td>
+                                    }
+                                    <td>@item.Payment</td>
+                                    <td>@item.Address</td>
+                                    <td>@item.Amount.ToString("#,##0")</td>
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-primary btn-detail" data-id="@item.Id" title="Thông tin chi tiết">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary" onclick="Xuathoadon(@item.Id)" title="Xuất hoá đơn về mail">
+                                            <i class="fa fa-envelope"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nút "Trở về" -->
+        <div class="row mt-3">
+            <div class="col-12 col-lg-4">
+                <a asp-action="Index" asp-controller="ShopCart" class="btn btn-secondary w-100" style="margin-bottom: 20px;">
+                    Trở về
+                </a>
+            </div>
+        </div>
+
+        <!-- Modal hiển thị chi tiết đơn hàng -->
+        <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailModalLabel" aria-hidden="true" data-backdrop="false">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="orderDetailModalLabel">Chi Tiết Đơn Hàng</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Tên Sách</th>
+                                    <th>Số Lượng</th>
+                                    <th>Giá</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orderDetailBody">
+                                <!-- Dữ liệu sẽ được thêm vào đây bằng AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,274 @@
+﻿/* Reset & Box Sizing */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    color: #fff;
+    padding: 20px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    overflow-y: auto !important;
+}
+/* Canvas hiệu ứng tia lazer */
+#laserCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+/* Container checkout, đặt trên canvas */
+.container {
+    position: relative;
+    z-index: 1;
+    width: 600px !important;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    animation: fadeIn 1s ease-in-out;
+    text-align: left !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header-image-container {
+    overflow: hidden;
+    border-radius: 15px 15px 0 0;
+    position: relative;
+}
+    /* Banner SVG được tích hợp trực tiếp */
+    .header-image-container svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        transition: transform 0.5s;
+    }
+
+        .header-image-container svg:hover {
+            transform: scale(1.05);
+        }
+
+.content {
+    padding: 20px 0;
+}
+
+h2, h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+#infoVoucher {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 10px
+}
+#infoAddress {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    text-align: center;
+    margin-top: 10px
+}
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+    input:-webkit-autofill, textarea:-webkit-autofill {
+        background: rgba(255,255,255,0.1);
+        -webkit-text-fill-color: white !important;
+        transition: background 5000s ease-in-out 0s; /* Ngăn trình duyệt thay đổi màu */
+    }
+
+    input::placeholder {
+        color: #bbb;
+    }
+    
+    input:focus {
+        outline: none;
+        border-color: #00ffff;
+        box-shadow: 0 0 8px rgba(0,255,255,0.5);
+    }
+textarea {
+    resize: vertical; /* Chỉ cho phép mở rộng theo chiều dọc */
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+    textarea:focus {
+        outline: none;
+        border-color: #00ffff;
+        box-shadow: 0 0 8px rgba(0,255,255,0.5);
+    }
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: background 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+    button:hover {
+        transform: scale(1.02);
+    }
+
+.gradient-btn {
+    background: linear-gradient(45deg, #00ffff, #ff00ff);
+    color: #000;
+    font-weight: 500;
+}
+
+.payment-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+    .payment-buttons button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 500;
+    }
+
+        .payment-buttons button.paypal {
+            background: #003087;
+        }
+
+        .payment-buttons button.vnpay {
+            background: #ff4c00;
+        }
+
+        .payment-buttons button.momo {
+            background: #8a2be2;
+        }
+
+    .payment-buttons img {
+        margin-right: 5px;
+    }
+
+.total-breakdown {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+    .total-breakdown.in-view {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .total-breakdown p {
+        margin: 8px 0;
+        font-size: 16px;
+    }
+
+    .total-breakdown hr {
+        border: 0;
+        border-top: 1px solid rgba(255,255,255,0.2);
+        margin: 10px 0;
+    }
+
+.back-to-cart {
+    background: #555;
+    color: #fff;
+    width: 100%;
+    margin-top: 10px;
+    opacity: 70%;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+    .back-to-cart.in-view {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+#mapModalAddress.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#mapModalAddress .modal-content {
+    background: #31b6eb;
+    padding: 20px 30px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: fadeIn 0.4s ease;
+}
+
+    #mapModalAddress .modal-content textarea {
+        margin-top: 10px;
+    }
+
+    #mapModalAddress .modal-content button {
+        margin: 5px;
+        background-color: #70de45;
+    }

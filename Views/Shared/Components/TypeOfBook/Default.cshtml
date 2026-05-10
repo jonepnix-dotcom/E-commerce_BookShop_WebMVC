@@ -1,0 +1,17 @@
+﻿@model IEnumerable<TheLight_JoneBookShop_WebMVC.DTO.TypeOfBook_ViewComponents>
+<!-- Liệt kê "All" (tức là không lọc) -->
+<li>
+    <a class="filter-category active-category" data-cat-id="0">
+        Tất cả
+    </a>
+</li>
+
+@foreach (var item in Model)
+{
+    <li>
+        <a class="filter-category" data-cat-id="@item.id">
+            @item.name [@item.quantity]
+        </a>
+    </li>
+}
+

@@ -1,0 +1,153 @@
+﻿@model TheLight_JoneBookShop_WebMVC.Models.Book
+@{
+    ViewData["Title"] = Model.BookName;
+}
+@section Styles{
+    <style>
+        .carousel-inner img {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+        }
+    </style>
+}
+
+<!-- Product Details Area Start -->
+<div class="single-product-area section-padding-100 clearfix">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mt-50">
+                        <li class="breadcrumb-item"><a asp-action="Index">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Shop">Cửa Hàng</a></li>
+                        <li class="breadcrumb-item"><a asp-action="Shop" asp-route-catId="@Model.IdbookType">@Model.IdbookTypeNavigation.BookTypeName</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@Model.BookName</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-lg-7">
+                <div class="single_product_thumb">
+                    <div id="product_details_slider" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            @{
+                                var images = Model.Images.Take(4).ToList();
+                            }
+
+                            @for (int i = 0; i < images.Count; i++)
+                            {
+                                <li class="@(i == 0 ? "active" : "")" data-target="#product_details_slider" data-slide-to="@i"
+                                    style="background-image: url('@Url.Content("~/Images/" + images[i].Name)');">
+                                </li>
+                            }
+                        </ol>
+                        <!-- Carousel Inner -->
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < images.Count; i++)
+                            {
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <a class="gallery_img" href="@Url.Content("~/Images/" + images[i].Name)">
+                                        <img class="d-block w-100" src="@Url.Content("~/Images/" + images[i].Name)" alt="Slide @(i + 1)">
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-5">
+                <div class="single_product_desc">
+                    <!-- Product Meta Data -->
+                    <div class="product-meta-data">
+                        <div class="line"></div>
+                        @if (Model.IddiscountNavigation != null && Model.IddiscountNavigation.Status == true
+                        && Model.IddiscountNavigation.DiscountValue > 0
+                        && Model.IddiscountNavigation.StartDate <= DateTime.Today
+                        && Model.IddiscountNavigation.EndDate >= DateTime.Today)
+                        {
+                            var discountedPrice = Model.Price * (1 - Model.IddiscountNavigation.DiscountValue / 100);
+                            <p class="product-price">
+                                <span style="text-decoration: line-through; color: gray;">@Model.Price.ToString("#,##0") VNĐ</span>
+                                <span style="color: red; font-weight: bold; margin-left: 10px;">@discountedPrice.ToString("#,##0") VNĐ</span>
+                                <span style="
+                                            background-color: orange; /* Màu nền nổi bật */
+                                            color: white; /* Màu chữ trắng để dễ nhìn */
+                                            font-size: 16px; /* Chữ lớn hơn */
+                                            font-weight: bold; /* In đậm */
+                                            padding: 5px 10px; /* Tăng khoảng cách giữa chữ và viền */
+                                            border-radius: 5px; /* Bo tròn góc */
+                                            margin-left: 10px; /* Giữ khoảng cách với giá tiền */
+                                            display: inline-block; /* Để phần mác giảm giá không bị vỡ layout */
+    ">
+                                    -@Model.IddiscountNavigation.DiscountValue%
+                                </span>
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="product-price">@Model.Price.ToString("#,##0") VNĐ</p>
+                        }
+                        <a>
+                            <h6>@Model.BookName</h6>
+                            <p>
+                                Tác giả:
+                                @{
+                                    var authors = Model.BookAuthors
+                                    .Select(ba => ba.IdauthorNavigation.AuthorName)
+                                    .ToList();
+                                    for (int i = 0; i < authors.Count; i++)
+                                    {
+                                        if (i == authors.Count - 1)
+                                        {
+                                            @($"{authors[i]}.")
+                                        }
+                                        else
+                                        {
+                                            @($"{authors[i]}, ")
+                                        }
+                                    }
+                                }
+                            </p>
+
+                        </a>
+                        <!-- Ratings & Review -->
+                        <div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
+                            <div class="ratings">
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                                <i class="fa fa-star" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <!-- Avaiable -->
+                        <p class="avaibility"><i class="fa fa-circle"></i>Còn Hàng</p>
+                    </div>
+
+                    <div class="short_overview my-5">
+                        <p>@Html.Raw(Model.Description)</p>
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    <form class="cart clearfix" method="post" asp-action="AddToCard" asp-controller="ShopCart" asp-route-id="@Model.Idbook">
+                        <div class="cart-btn d-flex mb-50">
+                            <p>Số lượng</p>
+                            <div class="quantity">
+                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-caret-down" aria-hidden="true"></i></span>
+                                <input class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="@ViewBag.Quantity">
+                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-caret-up" aria-hidden="true"></i></span>
+                            </div>
+                        </div>
+                        <button type="submit" name="addtocart" value="5" class="btn amado-btn">Thêm vào giỏ hàng</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Product Details Area End -->

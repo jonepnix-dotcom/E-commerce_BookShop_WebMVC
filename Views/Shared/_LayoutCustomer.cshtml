@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <title>@(ViewData["Title"] ?? "JoneBookShop - Nhà sách trực tuyến")</title>
+
+    <meta name="google-site-verification" content="XpFdE4qHc8bIFferMU-kd_UcRp1iAUyWQ3HixsTjxk8" />
+    <meta name="description" content="JoneBookShop - Cửa hàng sách trực tuyến với hàng ngàn đầu sách hay, giá tốt, giao hàng nhanh toàn quốc. Khám phá ngay!">
+    <link rel="canonical" href="https://www.jonepnix.xyz/" />
+    <link rel="icon" href="~/JoneBookShop.ico">
+
+    <link rel="stylesheet" href="~/css/styleRegister.css?v=4">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />   
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <div class="container">
+        @RenderBody()
+    </div> 
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,109 @@
+﻿@model TheLight_JoneBookShop_WebMVC.DTO.ParentVM
+@{
+    ViewData["Title"] = "Thông Tin Tài Khoản | JoneBookShop";
+}
+@section Styles {
+    <link href="~/css/Profile.css" rel="stylesheet" />
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $("form").validate({
+                onfocusout: function (element) { this.element(element); },
+                onkeyup: function (element) { this.element(element); }
+                // ...
+            });
+
+            // Rồi lắng nghe 'input'
+            $("input, textarea").on("input", function () {
+                $(this).valid(); // Gọi jQuery Validation cho riêng element
+            });
+        });
+        function updateAddress(selectedAddress) {
+            var addressField = $("#address");
+            addressField.val(selectedAddress); // Cập nhật giá trị
+            addressField.valid(); // Kiểm tra lại validation
+        }
+        //Map Script
+        let map;
+        let marker;
+        let selectedAddress = "";
+
+        function openMapModal() {
+            document.getElementById("mapModal").style.display = "flex";
+            initMap();
+        }
+
+        function closeMapModal() {
+            document.getElementById("mapModal").style.display = "none";
+        }
+
+        function initMap() {
+            if (!map) {
+                map = L.map("map").setView([10.7769, 106.7009], 13); // Mặc định: TP.HCM
+
+                // Thêm tile từ OpenStreetMap
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Sự kiện click để chọn vị trí
+                map.on("click", function (e) {
+                    placeMarker(e.latlng);
+                });
+            }
+        }
+
+        function placeMarker(latlng) {
+            if (marker) {
+                marker.remove();
+            }
+
+            marker = L.marker(latlng).addTo(map);
+
+            // Lấy địa chỉ từ Nominatim API
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.display_name) {
+                        selectedAddress = data.display_name;
+                        updateAddress(selectedAddress);
+                    } else {
+                        selectedAddress = "Không tìm thấy địa chỉ!";
+                    }
+                });
+        }
+
+        function confirmLocation() {
+            if (selectedAddress) {
+                document.getElementById("address").value = selectedAddress;
+                document.getElementById("addressDisplay").innerText = selectedAddress;
+            }
+            closeMapModal();
+        }
+    </script>
+}
+
+<div class="products-catagories-area clearfix">
+    <div class="amado-pro-catagory clearfix">
+
+        <div class="profile-card single-products-catagory clearfix">
+            @await Html.PartialAsync("_P_Profile", Model.ProfileInfo)
+            @await Html.PartialAsync("_P_ChangePassword", Model.ChangePassword)
+            <div id="mapModal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <h2>Chọn vị trí trên bản đồ</h2>
+                    <div id="map" style="height: 400px; width: 100%;"></div>
+                    <button onclick="confirmLocation()">Xác nhận</button>
+                    <button onclick="closeMapModal()">Đóng</button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+

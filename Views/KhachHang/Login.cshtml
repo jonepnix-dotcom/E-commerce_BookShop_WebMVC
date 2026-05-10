@@ -1,0 +1,63 @@
+﻿@model LoginVM
+@{
+    ViewData["Title"] = "Đăng Nhập | JoneBookShop";
+    Layout = "_LayoutCustomer";
+}
+@section Styles {
+    <style>
+        .container {
+            width: 330px;
+            background: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 10px 35px 10px 35px;
+        }
+    </style>
+}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $("form").validate({
+                onfocusout: function (element) {
+                    this.element(element);
+                }
+            });
+        });
+    </script>
+}
+
+<button class="close-btn" type="button" onclick="location.href='@Url.Action("Index", "Books")'"> <i class="bi bi-x-octagon"></i></button>
+<header>Login</header>
+<div class="form-outer">
+    <form id="loginForm" asp-action="Login" asp-route-ReturnUrl="@ViewBag.ReturnUrl" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="page slide-page">
+            <div class="field">
+                <div class="label"><label asp-for="@Model.UserName"></label></div>
+                <input class="form-control" asp-for="UserName" />
+            </div>
+            <div class="field">
+                <div class="label"><label asp-for="@Model.Password"></label></div>
+                <input type="password" class="form-control" asp-for="Password" />
+            </div>
+
+            <span style="color: red;" class="text-danger" asp-validation-for="UserName"></span>
+            <br />
+            <span style="color: red;" class="text-danger" asp-validation-for="Password"></span>
+
+            <div class="field btns">
+                <button class="prev" onclick="location.href='@Url.Action("Register", "KhachHang")'" type="button">Register</button>
+                <button class="login prev" type="submit">Login</button>
+                <button type="button">
+                    <a style="text-decoration: none; color: #fff;" asp-controller="KhachHang" asp-action="GoogleLogin" asp-route-returnUrl="@ViewBag.ReturnUrl" class="btn btn-danger">
+                    <i class="fab fa-google"></i> Google
+                </a>
+                </button>
+
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,120 @@
+﻿@using TheLight_JoneBookShop_WebMVC.helper
+@model TheLight_JoneBookShop_WebMVC.DTO.ShopVM
+
+
+<!-- Danh sách Sản phẩm -->
+@foreach (var item in Model.Books)
+{
+    <div class="col-12 col-sm-6 col-md-12 col-xl-6">
+        <div class="single-product-wrapper">
+            <!-- Product Image -->
+            <div class="product-img">
+                @{
+                    var firstImage = item.Images?.FirstOrDefault();
+                }
+                @if (firstImage != null)
+                {
+                    <img src="~/Images/@firstImage.Name" alt="Ảnh bìa" />
+                }
+                else
+                {
+                    <img src="~/img/Logo_JP.png" alt="Mặc Định" />
+                }
+                <img class="hover-img" src="~/img/Logo_JP.png" alt="Logo JoneBookShop">
+                @if (item.IddiscountNavigation != null && item.IddiscountNavigation.Status == true 
+                && item.IddiscountNavigation.DiscountValue > 0
+                && item.IddiscountNavigation.StartDate <= DateTime.Today
+                && item.IddiscountNavigation.EndDate >= DateTime.Today)
+                {
+                    <div class="discount-label">@item.IddiscountNavigation.DiscountValue.ToString("N0")%</div>
+                }
+            </div>
+            <!-- Product Description -->
+            <div class="product-description d-flex align-items-center justify-content-between">
+                <div class="product-meta-data">
+                    <div class="line"></div>
+                    <p class="product-price">@item.Price.ToString("#,##0") VNĐ</p>
+                    <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Idbook" asp-route-slug="@ManagerTool.ConvertToSlug(item.BookName)">
+                        <h6>@item.BookName</h6>
+                        <h7>Loại: @item.IdbookTypeNavigation.BookTypeName</h7>
+                    </a>
+                </div>
+                <!-- Ratings & Cart -->
+                <div class="ratings-cart text-right">
+                    <div class="ratings">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+                    <div class="cart">
+                        <a asp-action="AddToCard" asp-controller="ShopCart" asp-route-id="@item.Idbook" data-toggle="tooltip" data-placement="left" title="Add to Cart">
+                            <img src="~/img/core-img/cart.png" alt="Logo Giỏ Hàng">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<!-- Phân trang -->
+<div class="col-12">
+    <nav aria-label="navigation">
+        <ul class="pagination justify-content-end mt-50">
+            @{
+                // Số trang hiển thị xung quanh CurrentPage
+                int maxRange = 1;
+
+                int startPage = Model.CurrentPage - maxRange;
+                int endPage = Model.CurrentPage + maxRange;
+
+                // Đảm bảo không vượt quá [1..TotalPages]
+                if (startPage < 1) startPage = 1;
+                if (endPage > Model.TotalPages) endPage = Model.TotalPages;
+            }
+
+            <!-- Link về trang 1 (và dấu ... nếu cần) -->
+            @if (startPage > 1)
+            {
+                <li class="page-item @(Model.CurrentPage == 1 ? "active" : "")">
+                    <a class="page-link page-ajax"  data-page="1">1.</a>
+                </li>
+                @if (startPage > 2)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+            }
+
+            <!-- Hiển thị dải trang xung quanh CurrentPage -->
+            @for (int p = startPage; p <= endPage; p++)
+            {
+                <li class="page-item @(p == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link page-ajax" data-page="@p">
+                        @p.
+                    </a>
+                </li>
+            }
+
+            <!-- Link về trang cuối (và dấu ... nếu cần) -->
+            @if (endPage < Model.TotalPages)
+            {
+                if (endPage < Model.TotalPages - 1)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "active" : "")">
+                    <a class="page-link page-ajax" data-page="@Model.TotalPages">
+                        @Model.TotalPages.
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>

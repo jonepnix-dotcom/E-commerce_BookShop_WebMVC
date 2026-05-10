@@ -1,0 +1,146 @@
+﻿@using TheLight_JoneBookShop_WebMVC.helper
+@model IEnumerable<TheLight_JoneBookShop_WebMVC.DTO.ShopCartVM>
+@{
+    ViewData["Title"] = "Giỏ hàng | JoneBookShop";
+}
+@section Scripts {
+    <script>
+        function PlusMinusCart(id, quantity) {
+            $.ajax({
+                url: '/ShopCart/PlusMinus',
+                type: 'POST',
+                data: { id: id, quantity: quantity },
+                success: function (response) {
+                    if (response.success) {
+                        if (response.quantitybook === 0) {
+                            $('#product-row-' + id).remove();
+                        } else {
+                            $('#total-' + id).text(response.total);
+                            $('#qty-' + id).val(response.quantitybook);
+                        }
+                        $('#totalPrice').text(Number(response.totalprice).toLocaleString('vi-VN') + " VND");
+
+                        // Cập nhật nút thanh toán dựa trên trạng thái giỏ hàng
+                        if (response.totalprice === 0) {
+                            // Giỏ hàng trống: hiển thị nút bị vô hiệu
+                            $('.cart-btn').html('<button class="btn amado-btn w-100" disabled>Giỏ hàng trống</button>');
+                        } else {
+                            // Giỏ hàng có sản phẩm: hiển thị nút chuyển đến trang thanh toán
+                            var checkoutUrl = '@Url.Action("Checkout", "ShopCart")'; // Sử dụng Razor để tạo URL
+                            $('.cart-btn').html('<a href="' + checkoutUrl + '" class="btn amado-btn w-100">Thanh Toán</a>');
+                        }
+                    }
+                },
+            });
+        }
+        function RemoveCartItem(id) {
+            var quantity = $('#qty-' + id).val();
+            PlusMinusCart(id, -quantity);
+        }
+    </script>
+}
+<div class="cart-table-area section-padding-100">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-lg-12">
+                <div class="cart-title mt-50">
+                    <h1>Giỏ Hàng</h1>
+                </div>
+
+                <div class="cart-table clearfix">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th>Hình</th>
+                                <th>Tên</th>
+                                <th>Giá</th>
+                                <th>Số Lượng</th>
+                                <th>Tổng</th>
+                                <th>Xoá</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr id="product-row-@item.Idbook">
+                                    <td class="cart_product_img">
+                                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Idbook" asp-route-slug="@ManagerTool.ConvertToSlug(item.BookName)">
+
+
+                                            <img src="~/Images/@item.Image" alt="Ảnh bìa" />
+
+
+                                        </a>
+                                    </td>
+                                    <td class="cart_product_desc">
+                                        <a asp-controller="Books" asp-action="Details" asp-route-id="@item.Idbook" asp-route-slug="@ManagerTool.ConvertToSlug(item.BookName)"><h5>@item.BookName</h5></a>
+                                    </td>
+                                    <td class="price">
+                                        <span>@item.Price.ToString("#,##0")</span>
+                                        @if (item.DiscountValue > 0)
+                                        {
+                                            <span>| <strong style="color:red;">-@item.DiscountValue.ToString("N0")%</strong></span>
+                                        }
+                                    </td>
+                                    <td class="qty">
+                                        <div class="qty-btn">
+                                            <div class="quantity">
+                                                <span class="qty-minus" onclick="PlusMinusCart(@item.Idbook, -1);"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                                <input type="number" class="qty-text" id="qty-@item.Idbook" step="1" min="1" max="300" name="quantity" value="@item.Quantity" readonly>
+                                                <span class="qty-plus" onclick="PlusMinusCart(@item.Idbook, 1);"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span id="total-@item.Idbook">@item.Total.ToString("#,##0")</span>
+                                    </td>
+                                    <td style="text-align:center">
+                                        <a class="btn-delete" onclick="RemoveCartItem(@item.Idbook);"><i class="fas fa-trash-alt" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-12 col-lg-4">
+                <div class="cart-summary">
+                    <h3>Hoá Đơn</h3>
+                    <ul class="summary-table">
+                        <li><span>Đơn Hàng:</span> <span id="totalPrice">@Model.Sum(x => x.Total).ToString("#,##0") VND</span></li>
+                    </ul>
+                    <div class="cart-btn">
+                        @if (Model != null && Model.Any())
+                        {
+                            <a asp-action="Checkout" asp-controller="ShopCart" class="btn amado-btn w-100">
+                                Thanh Toán
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn amado-btn w-100" disabled>
+                                Giỏ hàng trống
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="cart-summary">
+                    <h3>Lịch Sử Mua Hàng</h3>
+                    <div class="cart-btn">
+                        <a asp-action="OrderHistory" asp-controller="ShopCart" class="btn amado-btn w-100">
+                            Kiểm Tra Lịch Sử
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

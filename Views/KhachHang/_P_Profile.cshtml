@@ -1,0 +1,93 @@
+﻿@model TheLight_JoneBookShop_WebMVC.DTO.ProfileVM
+<form asp-action="Profile" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="profile-header">
+        <div class="avatar">
+            <img src="~/img/Logo_JP.png" alt="Avatar" class="avatar-img">
+        </div>
+        <h1 style="color: var(--primary-color); margin-bottom: 5px;">Thông Tin Tài Khoản</h1>
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-user"></i>
+        <label asp-for="Name" for="name"></label>
+        <span class="view-mode" id="nameDisplay">@Model.Name</span>
+        <input asp-for="Name" type="text" class="edit-mode" id="name" value="@Model.Name">
+
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-envelope"></i>
+        <label asp-for="Email" for="email"></label>
+        <span class="view-mode" id="emailDisplay">@Model.Email</span>
+        <input asp-for="Email" type="email" class="edit-mode" id="email" value="@Model.Email">
+
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-birthday-cake"></i>
+        <label asp-for="Birthday" for="birthday"></label>
+        <span class="view-mode" id="birthdayDisplay">
+            @(Model.Birthday.HasValue
+                ? Model.Birthday.Value.ToString("dd/MM/yyyy")
+                : "")
+        </span>
+        <input asp-for="Birthday" type="date" class="edit-mode" id="birthday" value="@Model.Birthday">
+
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-map-marker-alt"></i>
+        <label asp-for="Address" for="address"></label>
+        <span class="view-mode" id="addressDisplay">@Model.Address</span>
+        <textarea asp-for="Address" class="edit-mode" id="address" rows="3"></textarea>
+        <button class="openmap" type="button" onclick="openMapModal()" style="display: none">📍 Bản đồ</button>
+
+    </div>
+
+    <div class="form-group">
+        <i class="fas fa-phone"></i>
+        <label asp-for="Phones" for="phones"></label>
+        <span class="view-mode" id="phoneDisplay">@Model.Phones</span>
+        <input asp-for="Phones" type="tel" class="edit-mode" id="phones" pattern="[0-9]{10}" value=" @Model.Phones">
+
+    </div>
+
+    <div class="button-group">
+        <div class="button-group">
+            <button type="button" class="changepass-btn" onclick="enterChangePassword()">
+                <i class="fas fa-lock"></i>Đổi mật khẩu
+            </button>
+            <button type="button" class="edit-btn" onclick="enterEditMode()">
+                <i class="fas fa-edit"></i>Chỉnh sửa
+            </button>
+            <button class="save-btn" type="button" onclick="checkValidationAndOpenConfirmModal()" style="display: none;">
+                <i class="fas fa-save"></i>Lưu
+            </button>
+            <button type="button" class="cancel-btn" onclick="cancelEdit()" style="display: none;">
+                <i class="fas fa-times"></i>Hủy
+            </button>
+        </div>
+    </div>
+    <div id="errorModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Lỗi Dữ Liệu</h2>
+            <span asp-validation-for="Name" class="text-danger"></span>
+            <span asp-validation-for="Email" class="text-danger"></span>
+            <span asp-validation-for="Birthday" class="text-danger"></span>
+            <span asp-validation-for="Address" class="text-danger"></span>
+            <span asp-validation-for="Phones" class="text-danger"></span>
+            <button type="button" onclick="closeErrorModal()">Đóng</button>
+        </div>
+    </div>
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2>Xác Nhận Lưu</h2>
+            <p>Bạn có chắc muốn lưu các thay đổi? Hành động này không thể hoàn tác.</p>
+            <div class="modal-buttons">
+                <button type="submit" onclick="confirmSave()">Đồng ý</button>
+                <button type="button" onclick="closeModal()">Hủy</button>
+            </div>
+        </div>
+    </div>
+</form>

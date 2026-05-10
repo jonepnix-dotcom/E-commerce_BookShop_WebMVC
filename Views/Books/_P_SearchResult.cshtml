@@ -1,0 +1,29 @@
+﻿@using TheLight_JoneBookShop_WebMVC.helper
+@model IEnumerable<TheLight_JoneBookShop_WebMVC.Models.Book>
+
+@foreach (var book in Model)
+{
+    <tr>
+        <td class="search-img">
+            <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Idbook" asp-route-slug="@ManagerTool.ConvertToSlug(book.BookName)">
+                @{
+                    var firstImage = book.Images?.FirstOrDefault();
+                }
+                @if (firstImage != null)
+                {
+                    <img src="~/Images/@firstImage.Name" alt="Ảnh bìa" />
+                }
+                else
+                {
+                    <img src="~/img/Logo_JP.png" alt="Mặc Định" />
+                }
+            </a>
+        </td>
+        <td class="search-bookname">
+            <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Idbook" asp-route-slug="@ManagerTool.ConvertToSlug(book.BookName)" >
+                <h5>@book.BookName</h5>
+            </a>
+        </td>
+    </tr>
+}
+

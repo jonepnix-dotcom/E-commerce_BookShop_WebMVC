@@ -1,0 +1,171 @@
+﻿@model TheLight_JoneBookShop_WebMVC.DTO.ShopVM
+@{
+    ViewData["Title"] = "Cửa Hàng | JoneBookShop";
+}
+@section Scripts {
+    <script>
+        let currentCatId = 0;
+        let currentPageSize = 6;
+        let currentsortValue;
+        
+        $(window).on('resize', function () {
+            // Kiểm tra nếu kích thước nhỏ hơn breakpoint mobile (ví dụ: 992px)
+            if ($(window).width() < 992) {
+                // Reset trạng thái về mặc định
+                $("#sidebarMenu").removeClass("hidden-sidebar");
+                $(".amado_product_area").removeClass("expanded-products");
+            }
+        });
+        $("#toggleSidebar").click(function () {
+            $("#sidebarMenu").toggleClass("hidden-sidebar");
+            $(".amado_product_area").toggleClass("expanded-products");
+
+            let icon = $(this).find("i");
+            if ($("#sidebarMenu").hasClass("hidden-sidebar")) {
+                icon.removeClass("fa-chevron-left").addClass("fa-chevron-right");
+            } else {
+                icon.removeClass("fa-chevron-right").addClass("fa-chevron-left");
+            }
+        });
+        $(document).ready(function () {
+            $('#sort').change(function () {
+                currentsortValue = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("Shop", "Books")',
+                    type: 'GET',
+                    data: { sort: currentsortValue, pageSize: currentPageSize, catId: currentCatId },
+                    success: function (result) {
+                        $('#BookList').html(result);
+                    }
+                });
+            });
+        });
+        $(document).ready(function () {
+            // Lắng nghe sự kiện click trên link .filter-category
+            $(document).on('click', '.filter-category', function (e) {
+                e.preventDefault();
+
+                // Lấy ID danh mục từ data-cat-id
+                currentCatId = $(this).data('cat-id');
+
+                $.ajax({
+                    url: '@Url.Action("Shop", "Books")',
+                    type: 'GET',
+                    data: { catId: currentCatId, sort: currentsortValue, pageSize: currentPageSize },
+                    success: function (partialHtml) {
+                        // Đổ HTML vào #BookList
+                        $('#BookList').html(partialHtml);
+                    }
+                });
+            });
+
+            // Các JS khác (toggle sidebar, sort, v.v.)
+            // ...
+        });
+        $(document).ready(function () {
+            $('#viewProduct').change(function () {
+                currentPageSize = $(this).val(); // Lấy 12, 24, 30...
+                // Gọi Ajax đến /Books/Shop?page=1&pageSize=xxx
+                $.ajax({
+                    url: '@Url.Action("Shop", "Books")',
+                    type: 'GET',
+                    data: { page: 1, pageSize: currentPageSize, catId: currentCatId, sort: currentsortValue },
+                    success: function (partialHtml) {
+                        // partialHtml = _P_ShopList
+                        $('#BookList').html(partialHtml);
+                    }
+                });
+            });
+
+            // Bắt sự kiện click page-ajax
+            $(document).on('click', '.page-ajax', function () {
+                var page = $(this).data('page');
+                currentPageSize = $('#viewProduct').val(); // Lấy pageSize hiện tại
+                $.ajax({
+                    url: '@Url.Action("Shop", "Books")',
+                    type: 'GET',
+                    data: { page: page, pageSize: currentPageSize, catId: currentCatId, sort: currentsortValue },
+                    success: function (partialHtml) {
+                        $('#BookList').html(partialHtml);
+                    }
+                });
+            });
+        });
+        $(document).on('click', '.filter-category', function (e) {
+            e.preventDefault();
+
+            // 1. Bỏ class .active-category khỏi tất cả thể loại
+            $('.filter-category').removeClass('active-category');
+
+            // 2. Thêm class .active-category cho thể loại vừa click
+            $(this).addClass('active-category');
+
+            // 3. Gửi Ajax lọc
+            var catId = $(this).data('cat-id');
+            $.ajax({
+                url: '@Url.Action("FilterByCategory", "Books")',
+                type: 'GET',
+                data: { catId: catId },
+                success: function (partialHtml) {
+                    $('#BookList').html(partialHtml);
+                }
+            });
+        });
+    </script>
+}
+
+<!-- Thêm id="sidebarMenu" để dễ thao tác ẩn/hiện -->
+<div class="shop_sidebar_area" id="sidebarMenu">
+    <!-- Nội dung Category -->
+    <div class="widget catagory mb-50">
+        <h4 class="widget-title mb-30">Thể loại sách</h4>
+        <div class="catagories-menu">
+            <ul>
+                @await Component.InvokeAsync("TypeOfBook")
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="amado_product_area section-padding-100">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+                    <!-- Sorting -->
+                    <div class="product-sorting d-flex">
+                        <div class="sort-by-date d-flex align-items-center mr-15">
+                            <p>Sắp xếp</p>
+                            <form id="sortForm">
+                                <select id="sort" name="sort">
+                                    <option value="Newest">Mới Nhất</option>
+                                    <option value="Popular">Phổ Biến Nhất</option>
+                                    <option value="Discount">Siêu Giảm Giá</option>
+                                </select>
+                            </form>
+                        </div>
+                        <div class="view-product d-flex align-items-center">
+                            <p>Xem</p>
+                            <form action="#" method="get">
+                                <select name="select" id="viewProduct">
+                                    <option value="6">6</option>
+                                    <option value="12">12</option>
+                                    <option value="24">24</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </form>
+                            <button id="toggleSidebar" class="btn btn-outline-primary ml-2">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="BookList">
+        @await Html.PartialAsync("_P_ShopList", Model)
+        </div>
+    </div>
+</div>
