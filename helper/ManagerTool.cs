@@ -97,10 +97,10 @@ namespace TheLight_JoneBookShop_WebMVC.helper
                 <hr>
                 <p style='font-size: 12px; color: gray;'>Cửa Hàng JoneBookShop<br>Email: jonepnix@gmail.com<br>Hotline: +84 865 358 784</p>
             </div>";
-            string email = "jonebookshopverify@gmail.com";
-            string pass = "chrv ydve gpsh woyy";
-            string host = "smtp.gmail.com";
-            int port = 587;
+            string email = _configuration["EmailSettings:Email"];
+            string pass = _configuration["EmailSettings:Password"];
+            string host = _configuration["EmailSettings:Host"];
+            int port = int.Parse(_configuration["EmailSettings:Port"]);
             try
             {
                 using (MailMessage mail = new MailMessage())
