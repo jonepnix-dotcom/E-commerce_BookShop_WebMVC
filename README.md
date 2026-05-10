@@ -92,7 +92,7 @@ wwwroot/
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/yourusername/E-commerce_BookShop_WebMVC.git
+git clone https://github.com/jonepnix-dotcom/E-commerce_BookShop_WebMVC.git
 ```
 
 ---
