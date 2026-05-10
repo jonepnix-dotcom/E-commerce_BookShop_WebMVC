@@ -95,11 +95,44 @@ wwwroot/
 git clone https://github.com/yourusername/E-commerce_BookShop_WebMVC.git
 ```
 
+---
+
 ### 2. Open project
 
-Open solution using Visual Studio 2022.
+Open solution using:
 
-### 3. Configure database
+* Visual Studio 2022
+* SQL Server Management Studio (SSMS)
+
+---
+
+### 3. Restore database from `.bak`
+
+Database backup file is included in:
+
+```bash
+Database/dbbookshop.bak
+```
+
+Open SSMS and run:
+
+```sql
+RESTORE DATABASE dbbookshop
+FROM DISK = 'YOUR_PATH/dbbookshop.bak'
+WITH REPLACE;
+```
+
+Example:
+
+```sql
+RESTORE DATABASE dbbookshop
+FROM DISK = 'D:\Project\Database\dbbookshop.bak'
+WITH REPLACE;
+```
+
+---
+
+### 4. Configure connection string
 
 Update connection string in:
 
@@ -111,45 +144,19 @@ Example:
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=.;Database=BookShopDB;Trusted_Connection=True;TrustServerCertificate=True"
+  "MyConnect": "Data Source=localhost;Initial Catalog=dbbookshop;Persist Security Info=True;User ID=sa;Password=YOUR_PASSWORD;Trust Server Certificate=True"
 }
-```
-
-### 4. Run migration
-
-```bash
-Update-Database
-```
-
-or
-
-```bash
-dotnet ef database update
-```
-
-### 5. Run project
-
-Press:
-
-```bash
-F5
-```
-
-or:
-
-```bash
-dotnet run
 ```
 
 ---
 
-## 🔐 Google Authentication Setup
+### 5. Configure Google Authentication
 
-Create OAuth credentials from Google Cloud Console:
+Create OAuth credentials from:
 
 https://console.cloud.google.com/
 
-Then configure:
+Then update:
 
 ```json
 "GoogleKeys": {
@@ -160,25 +167,19 @@ Then configure:
 
 ---
 
-## 📸 Screenshots
+### 6. Run project
 
-### Home Page
+Press:
 
-(Add screenshot here)
+```bash
+F5
+```
 
-### Product Detail
+or run:
 
-(Add screenshot here)
-
-### Shopping Cart
-
-(Add screenshot here)
-
-### Admin Dashboard
-
-(Add screenshot here)
-
----
+```bash
+dotnet run
+```
 
 ## 📈 Learning Outcomes
 
@@ -196,20 +197,13 @@ Through this project, I learned:
 
 ---
 
-## 🔗 Demo & Source Code
-
-* GitHub: https://github.com/yourusername/E-commerce_BookShop_WebMVC
-* Demo: https://your-demo-link.com
-
----
 
 ## 👨‍💻 Author
 
 Your Name
 
-* Email: [your-email@gmail.com](mailto:your-email@gmail.com)
-* GitHub: https://github.com/yourusername
-* LinkedIn: https://linkedin.com/in/yourprofile
+* Email: [jonepnix@gmail.com](mailto:jonepnix@gmail.com)
+* GitHub: https://github.com/jonepnix-dotcom
 
 ---
 
